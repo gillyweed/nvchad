@@ -9,10 +9,38 @@ end
 vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
 
 return {
+  {
+    "lukas-reineke/indent-blankline.nvim",
+    enabled = false,
+  },
+
+  {
+    "folke/snacks.nvim",
+    lazy = false,
+    opts = {
+      indent = {
+        enabled = true,
+        char = "│",
+      },
+      scope = {
+        enabled = true,
+      },
+    },
+  },
+
+  {
+    "f-person/git-blame.nvim",
+    event = "VeryLazy",
+    opts = {
+      enabled = true,
+      message_template = " <summary> • <date> • <author>",
+      date_format = "%r",
+    },
+  },
 
   {
     "stevearc/conform.nvim",
-    -- event = 'BufWritePre', -- uncomment for format on save
+    event = 'BufWritePre', -- uncomment for format on save
     opts = require "configs.conform",
   },
 
@@ -46,15 +74,15 @@ return {
   },
 
   {
-  	"nvim-treesitter/nvim-treesitter",
+    "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-  	opts = {
-  		ensure_installed = {
-  			"vim", "lua", "vimdoc",
+    opts = {
+      ensure_installed = {
+        "vim", "lua", "vimdoc",
         "html", "css", "javascript",
         "typescript", "bash", "markdown",
-        "json", "yaml", "xml"
-  		},
+        "json", "yaml", "xml", "ruby"
+      },
 
       highlight = {
         enable = true,
@@ -62,9 +90,9 @@ return {
       },
 
       indent = {
-        enable = true,
+        enable = false,
       },
-  	},
+    },
     config = function(_, opts)
       require("nvim-treesitter.configs").setup(opts)
     end,

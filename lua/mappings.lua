@@ -8,14 +8,36 @@ map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 
 map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
-map("n", "H", "0", { desc = "Jump to line start"})
-map("n", "L", "$", { desc = "Jump to line end"})
+map("n", "H", "^", { desc = "Jump to line start" })
+map("n", "L", "$", { desc = "Jump to line end" })
+map("o", "H", "^")
+map("o", "L", "$")
 
-map("n","<Esc>", "<cmd>nohlsearch<CR>", {desc = "Clear highlights on search when pressing <Esc>"})
+
+map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear highlights on search when pressing <Esc>" })
 map('v', 'J', ":m '>+1<CR>gv=gv")
 map('v', 'K', ":m '<-2<CR>gv=gv")
 
-map("t","<C-x>","<C-\\><C-n>", {desc = "Exit terminal mode"})
+map("t", "<C-x>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+
+-- d and c deletes to the blackhole register
+map("n", "d", '"_d')
+map("v", "d", '"_d')
+map("n", "c", '"_c')
+map("v", "c", '"_c')
+
+-- x as cut (sends to main register)
+map("n", "x", '"+d')
+map("v", "x", '"+d')
+
+-- xx to cut a whole line
+map("n", "xx", '"+dd')
+
+-- X to cut from cursor to end of line
+map("n", "X", '"+D')
+
+vim.keymap.set("x", "<", "<gv")
+vim.keymap.set("x", ">", ">gv")
 
 -- keep cursor in the middle of the screen when jumping
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
