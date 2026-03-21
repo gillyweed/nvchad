@@ -18,6 +18,16 @@ vim.api.nvim_create_autocmd("FileType", {
       name = "ruby_lsp",
       cmd = { "/home/gillom/.local/bin/ruby-lsp-docker" },
       root_dir = root,
+      init_options = {
+        linters = { "rubocop" },
+        formatter = "rubocop",
+      }
+    })
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      buffer = args.buf,
+      callback = function()
+        vim.lsp.buf.format({ timeout_ms = 10000 })
+      end,
     })
   end,
 })

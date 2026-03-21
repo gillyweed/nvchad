@@ -10,7 +10,6 @@ local options = {
     lua = { "stylua" },
     css = { "prettier" },
     html = { "prettier" },
-    ruby = { "rubocop" },
     typescript = { "eslint_d" },
   },
 
