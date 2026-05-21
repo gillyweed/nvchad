@@ -16,42 +16,41 @@ M.base46 = {
 
 M.nvdash = { load_on_startup = true }
 M.ui = {
-      tabufline = {
-         lazyload = false
-     }
-}
+  tabufline = {
+    lazyload = false,
+  },
+  statusline = {
+    modules = {
+      file = function()
+        local utils = require "nvchad.stl.utils"
+        local stl_config = require("nvconfig").ui.statusline
+        local sep_style = stl_config.separator_style
+        local sep_icons = utils.separators
+        local separators = (type(sep_style) == "table" and sep_style) or sep_icons[sep_style]
+        local sep_r = separators["right"]
 
-M.plugins = {
-  ["nvim-tree/nvim-tree.lua"] = {
-    lazy = false,
-    config = function()
-      require("nvim-tree").setup {
-        git = {
-          timeout = 1000,
-        },
-      }
-      vim.api.nvim_create_autocmd("QuitPre", {
-        callback = function()
-          local tree_wins = {}
-          local other_wins = {}
+        local icon = "󰈚"
+        local path = vim.api.nvim_buf_get_name(utils.stbufnr())
+        local name
 
-          for _, win in ipairs(vim.api.nvim_list_wins()) do
-            local buf = vim.api.nvim_win_get_buf(win)
-            if vim.bo[buf].filetype == "NvimTree" then
-              table.insert(tree_wins, win)
-            else
-              table.insert(other_wins, win)
-            end
+        if path == "" then
+          name = "Empty"
+        else
+          name = vim.fn.fnamemodify(path, ":.")
+          local filename = path:match "([^/\\]+)[/\\]*$"
+          local ok, devicons = pcall(require, "nvim-web-devicons")
+          if ok and filename then
+            local ft_icon = devicons.get_icon(filename)
+            icon = ft_icon or icon
           end
+        end
 
-          -- If closing last non-tree window, close tree too
-          if #other_wins == 1 and #tree_wins > 0 then
-            vim.cmd("NvimTreeClose")
-          end
-        end,
-      })
-
-    end,
+        name = " " .. name .. (sep_style == "default" and " " or "")
+        return "%#St_file# " .. icon .. name .. "%#St_file_sep#" .. sep_r
+      end,
+    },
   },
 }
+
+
 return M

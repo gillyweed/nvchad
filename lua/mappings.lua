@@ -5,6 +5,20 @@ require "nvchad.mappings"
 local map = vim.keymap.set
 
 map("n", ";", ":", { desc = "CMD enter command mode" })
+
+-- replace <C-n> nvim-tree toggle with <leader>n
+map("n", "<leader>n", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle nvimtree" })
+
+-- toggle focus between nvimtree and the buffer
+map("n", "<leader>e", function()
+  local nvimtree = require("nvim-tree.api")
+  local current_buf = vim.api.nvim_get_current_buf()
+  if vim.bo[current_buf].filetype == "NvimTree" then
+    vim.cmd("wincmd p")
+  else
+    nvimtree.tree.focus()
+  end
+end, { desc = "Toggle focus between nvimtree and buffer" })
 map("i", "jk", "<ESC>")
 
 map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
@@ -45,6 +59,12 @@ vim.keymap.set('n', '<C-u>', '<C-u>zz')
 
 vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nvvvv')
+
+-- Resize splits
+map("n", "<C-Up>", "<cmd>resize +2<CR>", { desc = "Resize split up" })
+map("n", "<C-Down>", "<cmd>resize -2<CR>", { desc = "Resize split down" })
+map("n", "<C-Left>", "<cmd>vertical resize -2<CR>", { desc = "Resize split left" })
+map("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Resize split right" })
 
 map("n", "<leader>x", function()
   -- Close the current buffer

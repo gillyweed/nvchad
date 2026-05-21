@@ -3,10 +3,12 @@ require "nvchad.options"
 local o = vim.o
 o.cursorlineopt ='both'
 
+o.number = true
 o.relativenumber = true
 vim.opt_global.fileformat = "unix"
 
 o.cursorline = true
+o.equalalways = false
 o.scrolloff = 10
 
 vim.g.clipboard = {

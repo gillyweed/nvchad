@@ -2,6 +2,9 @@ local options = {
   git = {
     timeout = 1000,
   },
+  view = {
+    preserve_window_proportions = true,
+  },
 }
 
 vim.api.nvim_create_autocmd("QuitPre", {

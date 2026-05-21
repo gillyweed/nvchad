@@ -9,6 +9,30 @@ end
 vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
 
 return {
+  { "github/copilot.vim", lazy = false },
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    lazy = false,
+    dependencies = {
+      { "nvim-lua/plenary.nvim" },
+    },
+    build = "make tiktoken",
+    opts = {
+      window = {
+        layout = 'vertical',
+        width = 0.33,
+      },
+      auto_insert_mode = true,
+      chat = {
+        keymaps = {
+          close = "<C-c>",
+          submit = "<C-s>",
+          toggle_window = "<C-t>",
+        },
+      },
+    },
+  },
+
   {
     "lukas-reineke/indent-blankline.nvim",
     enabled = false,
