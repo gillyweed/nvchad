@@ -12,13 +12,6 @@ local options = {
     html = { "prettier" },
     typescript = { "eslint_d" },
   },
-
-  format_after_save = function(bufnr)
-    if vim.bo[bufnr].filetype == "ruby" then
-      return { timeout_ms = 10000, lsp_fallback = true }
-    end
-    return { timeout_ms = 5000, lsp_fallback = true }
-  end,
 }
 
 return options

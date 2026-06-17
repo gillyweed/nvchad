@@ -20,14 +20,8 @@ vim.api.nvim_create_autocmd("FileType", {
       root_dir = root,
       init_options = {
         linters = { "rubocop" },
-        formatter = "rubocop",
+        formatter = "rubocop_internal",
       }
-    })
-    vim.api.nvim_create_autocmd("BufWritePre", {
-      buffer = args.buf,
-      callback = function()
-        vim.lsp.buf.format({ timeout_ms = 10000 })
-      end,
     })
   end,
 })

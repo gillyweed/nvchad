@@ -9,27 +9,43 @@ end
 vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
 
 return {
-  { "github/copilot.vim", lazy = false },
+  {
+    "github/copilot.vim",
+    lazy = false,
+    init = function()
+      -- free up <Tab> for nvim-cmp / snippets; accept Copilot with <C-l>
+      vim.g.copilot_no_tab_map = true
+      vim.keymap.set("i", "<C-l>", 'copilot#Accept("\\<CR>")', {
+        expr = true,
+        replace_keycodes = false,
+        desc = "Copilot accept",
+      })
+    end,
+  },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
-    lazy = false,
+    event = "VeryLazy",
     dependencies = {
-      { "nvim-lua/plenary.nvim" },
+      "nvim-lua/plenary.nvim",
+      "github/copilot.vim",
     },
     build = "make tiktoken",
+    keys = {
+      { "<leader>cc", "<cmd>CopilotChatToggle<cr>", desc = "CopilotChat - Toggle", mode = { "n", "v" } },
+    },
     opts = {
       window = {
-        layout = 'vertical',
+        layout = "vertical",
         width = 0.33,
       },
       auto_insert_mode = true,
-      chat = {
-        keymaps = {
-          close = "<C-c>",
-          submit = "<C-s>",
-          toggle_window = "<C-t>",
-        },
+      mappings = {
+        close = { normal = "<C-c>", insert = "<C-c>" },
+        submit_prompt = { normal = "<C-s>", insert = "<C-s>" },
       },
+      on_open = function(bufnr)
+        vim.api.nvim_set_option_value("wrap", true, { buf = bufnr })
+      end,
     },
   },
 
@@ -57,14 +73,14 @@ return {
     event = "VeryLazy",
     opts = {
       enabled = true,
-      message_template = " <summary> • <date> • <author>",
+      message_template = " <author> • <date>",
       date_format = "%r",
     },
   },
 
   {
     "stevearc/conform.nvim",
-    event = 'BufWritePre', -- uncomment for format on save
+    cmd = "ConformInfo",
     opts = require "configs.conform",
   },
 
@@ -99,26 +115,31 @@ return {
 
   {
     "nvim-treesitter/nvim-treesitter",
+    branch = "main", -- 'master' is frozen and crashes on Neovim 0.11+ injection directives
     build = ":TSUpdate",
-    opts = {
-      ensure_installed = {
-        "vim", "lua", "vimdoc",
-        "html", "css", "javascript",
-        "typescript", "bash", "markdown",
-        "json", "yaml", "xml", "ruby"
-      },
+    config = function()
+      -- NOTE: the 'main' branch installs parsers via the `tree-sitter` CLI.
+      -- Make sure it's on PATH: `npm install -g tree-sitter-cli`.
+      -- Neovim already bundles lua/vim/vimdoc/markdown parsers, so only the
+      -- languages it doesn't ship are installed here.
+      require("nvim-treesitter").install {
+        "ruby", "embedded_template", -- embedded_template = ERB / Rails views
+        "html", "css", "javascript", "typescript",
+        "bash", "json", "yaml", "xml",
+      }
 
-      highlight = {
-        enable = true,
-        use_languagetree = true,
-      },
-
-      indent = {
-        enable = false,
-      },
-    },
-    config = function(_, opts)
-      require("nvim-treesitter.configs").setup(opts)
+      -- the 'main' branch no longer auto-enables highlighting; start it per buffer
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function(args)
+          pcall(vim.treesitter.start, args.buf)
+        end,
+      })
+      -- also start it for any buffer already open when this plugin loads
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(buf) then
+          pcall(vim.treesitter.start, buf)
+        end
+      end
     end,
   },
 }
